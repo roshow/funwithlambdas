@@ -3,6 +3,8 @@ const fetch = require('node-fetch');
 
 const { CHAPTERS_FOLDER_ID, INDEX_JSON_FILE_ID, GOOGLE_SERVICE_ACCOUNT} = process.env;
 
+console.log({ CHAPTERS_FOLDER_ID, INDEX_JSON_FILE_ID});
+
 let oAuth;
 let googleDrive;
 
