@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "encoding": "^0.1.12",
     "googleapis": "^39.2.0",
     "node-fetch": "^2.6.0"
   }
