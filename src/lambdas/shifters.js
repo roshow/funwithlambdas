@@ -1,9 +1,8 @@
 const {google} = require('googleapis');
 const fetch = require('node-fetch');
 
-const { CHAPTERS_FOLDER_ID, INDEX_JSON_FILE_ID, GOOGLE_SERVICE_ACCOUNT} = process.env;
-
-console.log({ CHAPTERS_FOLDER_ID, INDEX_JSON_FILE_ID});
+// export CHAPTERS_FOLDER_ID='1W6gVK5xU2VTsXDozyskHojMM2nKEM3Sg';
+// export INDEX_JSON_FILE_ID='1pQUOmyHJDQWhVEzPt9Etg6MOJpfX1lul';
 
 let oAuth;
 let googleDrive;
@@ -14,7 +13,7 @@ const getAuth = async () => {
     return oAuth;
   }
   oAuth = await google.auth.getClient({
-    credentials: JSON.parse(GOOGLE_SERVICE_ACCOUNT),
+    credentials: JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT),
     scopes: ['https://www.googleapis.com/auth/drive'],
   });
   return oAuth;
@@ -89,7 +88,7 @@ async function updateIndexJsonFile(content) {
   const drive = await getDrive();
   return new Promise((resolve, reject) => {
     drive.files.update({
-      fileId: INDEX_JSON_FILE_ID,
+      fileId: process.env.INDEX_JSON_FILE_ID,
       uploadType: 'media',
       media: {
         mimeType: 'application/json',
@@ -110,14 +109,13 @@ async function updateIndexJsonFile(content) {
 async function indexChapters() {
   const res = await listFiles({
     fields: 'nextPageToken, files(name, id, mimeType)',
-    q: `'${CHAPTERS_FOLDER_ID}' in parents and mimeType = 'application/vnd.google-apps.folder'`,
+    q: `'${process.env.CHAPTERS_FOLDER_ID}' in parents and mimeType = 'application/vnd.google-apps.folder'`,
   });
   const folders = res.data.files;
   const promises = folders.map(getChapterDetails);
   const chapters = await Promise.all(promises);
   const chaptersOrdered = chapters.sort((a, b) => a.number - b.number);
   await updateIndexJsonFile(chaptersOrdered);
-  console.log('index.json file updated');
   
 }
 
